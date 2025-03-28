@@ -4,7 +4,6 @@ import edu.princeton.cs.algs4.DirectedEdge;
 import edu.princeton.cs.algs4.EdgeWeightedDigraph;
 import edu.princeton.cs.algs4.Picture;
 
-
 public class SeamCarver {
 
     private Picture picture;
@@ -14,7 +13,7 @@ public class SeamCarver {
     public SeamCarver(Picture picture) {
 
         this.picture = picture;
-
+        energyField = new double[height()][width()];
         //calculate initial energy
 
         for (int row = 0; row<picture.height(); row++) {
@@ -29,7 +28,6 @@ public class SeamCarver {
 
         energyField = new double[picture.height()][picture.width()];
         transposePicture();
-
 
     }
 
@@ -102,28 +100,17 @@ public class SeamCarver {
 
         for (int i = 1; i<height()-1; i++) {
 
-            
-
         } 
-
 
     }
 
     private void pathFind() {
 
-        
-
     }
  
-
-
-
-
-
     // sequence of indices for vertical seam
     public int[] findVerticalSeam() {
         //Traverse matric to build the distTo and edgeTo
-        int lowestSum;
         int[][] edgeTo = new int[height()][width()]; //index based
         double[][] distTo = new double[height()][width()]; //distTo energy
         for (int row = 0; row < height(); row++) {
@@ -157,18 +144,32 @@ public class SeamCarver {
                     edgeTo[row][col] = col+1;
                 }
 
-
-
             }
 
             }
+            double shortestPath = Integer.MAX_VALUE;
+            int shortestPathColumn = -1;
+            for (int i = 0; i < width() ; i++) {
+                if (distTo[height()-1][i] < shortestPath) {
+                    shortestPath = distTo[height()-1][i];
+                    shortestPathColumn = edgeTo[height()-1][i];
+                }
+            }
+
+
+            int[] returnList = new int[height()];
+
+            int row = height()-1;
+            while (row >= 1) {
+                returnList[row] = shortestPathColumn;
+                shortestPathColumn = edgeTo[row][shortestPathColumn];
+                row--;
+            }
+
+            return returnList;
 
         }
 
-
-
-    }
- 
     // remove horizontal seam from current picture
     public void removeHorizontalSeam(int[] seam) {
 
