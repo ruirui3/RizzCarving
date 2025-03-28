@@ -1,5 +1,7 @@
 import java.awt.Color;
 
+import edu.princeton.cs.algs4.DirectedEdge;
+import edu.princeton.cs.algs4.EdgeWeightedDigraph;
 import edu.princeton.cs.algs4.Picture;
 
 
@@ -25,8 +27,6 @@ public class SeamCarver {
 
         }
 
-        calculateEnergyField();
-
         energyField = new double[picture.height()][picture.width()];
         transposePicture();
 
@@ -34,9 +34,8 @@ public class SeamCarver {
     }
 
     private double calculateEnergy(int row, int col) {
-        //fetch RGB values for top bottom, left right? how to fetch RGB
-
-        if (row == 0 || row == picture.height()-1 || col == 0 || col == picture.width()) {
+        //no need bounds for row/col is lower than 0 or higher than height-1/width-1 
+        if (row == 0 || row == picture.height()-1 || col == 0 || col == picture.width()-1) {
             return 1000;
         }
 
@@ -49,20 +48,6 @@ public class SeamCarver {
 
         return Math.sqrt(Math.pow(x1, 2) + Math.pow(y1, 2) + Math.pow(z1, 2)
         + Math.pow(x2, 2) + Math.pow(y2, 2) + Math.pow(z2, 2));
-
-
-
-
-    }
-
-    private void calculateEnergyField() {
-
-        energyField = new double[picture.height()][picture.width()];
-        //for each row
-        //for each column
-            //if row == 0 or row = picture.height()-1 or col == 0 or col = picture.width-1, energy = 1000
-        //else
-            //do math
 
     }
 
@@ -94,33 +79,94 @@ public class SeamCarver {
     }
  
     // energy of pixel at column x and row y
-    public double energy(int x, int y) {
-        return 0;
+    public double energy(int col, int row) {
+        return energyField[row][col];
     }
  
     // sequence of indices for horizontal seam
     public int[] findHorizontalSeam() {
-        return null;
+        int lowestSum;
+        int[][] edgeTo = new int[height()][width()]; //index based
+        double[][] distTo = new double[height()][width()]; //distTo energy
+        for (int row = 1; row < height()-1; row++) {
+
+            for (int col = 0; col < width(); col++) {
+
+                if (col == 0) {
+                    distTo[row][col] = 1000;
+                } else {
+                    distTo[row][col] = Double.POSITIVE_INFINITY;
+                }
+            }
+        }
+
+        for (int i = 1; i<height()-1; i++) {
+
+            
+
+        } 
+
+
+    }
+
+    private void pathFind() {
+
+        
+
     }
  
+
+
+
+
+
     // sequence of indices for vertical seam
     public int[] findVerticalSeam() {
         //Traverse matric to build the distTo and edgeTo
-        int[][] edgeTo = new int[picture.height()][picture.width()];
-        double[][] distTo = new double[picture.height()][picture.width()];
+        int lowestSum;
+        int[][] edgeTo = new int[height()][width()]; //index based
+        double[][] distTo = new double[height()][width()]; //distTo energy
+        for (int row = 0; row < height(); row++) {
 
-        //for all rows
-        //for all cols
-        //set initial diskTo as POSITIVE INFINITY
-        //if row == 0 - sset diskTo to 1000 since it is on the border
+            for (int col = 1; col < width()-1; col++) {
 
-        //Consider all verticies in topological order
-        //Relas all edges pointing from that vertex
-        
-        //for all rows and cols, 
-        //Check below, left, right, above
+                if (row == 0) {
+                    distTo[row][col] = 1000;
+                } else {
+                    distTo[row][col] = Double.POSITIVE_INFINITY;
+                }
 
-        return null;
+            }
+
+        }
+        for (int col = 1; col < width()-1; col++) {
+
+            for (int row = 1; row<height(); row++) { //next row
+
+                //distTo[row][prevCol] + edgeTo[row][prevCol] < distTo[row][col-1]
+                if (distTo[row-1][col-1] + energy(col, row) < distTo[row][col]) {
+                    distTo[row][col] = distTo[row-1][col-1] + energy(col, row);
+                    edgeTo[row][col] = col-1;
+                }
+                if (distTo[row-1][col] + energy(col, row) < distTo[row][col]) {
+                    distTo[row][col] = distTo[row-1][col] + energy(col, row);
+                    edgeTo[row][col] = col;
+                }
+                if (distTo[row-1][col+1] + energy(col, row) < distTo[row][col]) {
+                    distTo[row][col] = distTo[row-1][col+1] + energy(col, row);
+                    edgeTo[row][col] = col+1;
+                }
+
+
+
+            }
+
+            }
+
+        }
+
+
+
     }
  
     // remove horizontal seam from current picture
