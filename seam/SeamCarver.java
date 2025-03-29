@@ -26,8 +26,8 @@ public class SeamCarver {
 
         }
 
-        energyField = new double[picture.height()][picture.width()];
-        transposePicture();
+        // energyField = new double[picture.height()][picture.width()];
+        // transposePicture();
 
     }
 
@@ -48,18 +48,6 @@ public class SeamCarver {
         + Math.pow(x2, 2) + Math.pow(y2, 2) + Math.pow(z2, 2));
 
     }
-
-    private void transposePicture() {
-        Picture tempPicture = new Picture(picture.height(), picture.width());
-        for (int row = 0; row < picture.width(); row++) {
-            for (int col = 0; col < picture.height(); col++) {
-
-                tempPicture.setARGB(col, row, picture.getARGB(row, col));
-
-            }
-        }
-        picture = tempPicture;
-    }
  
     // current picture
     public Picture picture() {
@@ -73,7 +61,7 @@ public class SeamCarver {
  
     // height of current picture
     public int height() {
-        return picture().height();
+        return picture.height();
     }
  
     // energy of pixel at column x and row y
@@ -83,29 +71,7 @@ public class SeamCarver {
  
     // sequence of indices for horizontal seam
     public int[] findHorizontalSeam() {
-        int lowestSum;
-        int[][] edgeTo = new int[height()][width()]; //index based
-        double[][] distTo = new double[height()][width()]; //distTo energy
-        for (int row = 1; row < height()-1; row++) {
-
-            for (int col = 0; col < width(); col++) {
-
-                if (col == 0) {
-                    distTo[row][col] = 1000;
-                } else {
-                    distTo[row][col] = Double.POSITIVE_INFINITY;
-                }
-            }
-        }
-
-        for (int i = 1; i<height()-1; i++) {
-
-        } 
-
-    }
-
-    private void pathFind() {
-
+        return null;
     }
  
     // sequence of indices for vertical seam
@@ -129,6 +95,11 @@ public class SeamCarver {
         for (int col = 1; col < width()-1; col++) {
 
             for (int row = 1; row<height(); row++) { //next row
+
+                if (col >= width()-1 || row >= height()) {
+                    System.out.println(" a ");
+                }
+                
 
                 //distTo[row][prevCol] + edgeTo[row][prevCol] < distTo[row][col-1]
                 if (distTo[row-1][col-1] + energy(col, row) < distTo[row][col]) {
@@ -157,6 +128,7 @@ public class SeamCarver {
             }
 
 
+
             int[] returnList = new int[height()];
 
             int row = height()-1;
@@ -177,11 +149,11 @@ public class SeamCarver {
  
     // remove vertical seam from current picture
     public void removeVerticalSeam(int[] seam) {
-        if (vertical) {
+        /*if (vertical) {
             transposePicture();
             vertical = false;
         }
-        removeSeam(seam);
+        removeSeam(seam);*/
     }
 
     private void removeSeam (int [] seam) {
