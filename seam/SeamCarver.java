@@ -1,7 +1,3 @@
-import java.awt.Color;
-
-import edu.princeton.cs.algs4.DirectedEdge;
-import edu.princeton.cs.algs4.EdgeWeightedDigraph;
 import edu.princeton.cs.algs4.Picture;
 
 public class SeamCarver {
@@ -234,24 +230,18 @@ public class SeamCarver {
     // remove horizontal seam from current picture
     public void removeHorizontalSeam(int[] seam) {
 
-        double[][] newEnergy = new double[height() - 1][width()];
         Picture newPicture = new Picture(width(), height() - 1);
 
-        for (int col = 0; col < width(); col++) {
+        for (int col = 0; col < newPicture.width(); col++) {
 
             int rowToBeRemoved = seam[col];
 
-            for (int row = 0; col < height(); row++) {
+            for (int row = 0; row < newPicture.height(); row++) {
 
-                if (row >= rowToBeRemoved) {
-
-                    newPicture.setARGB(col, row, picture.getARGB(col, row + 1)); // get rgb on right. NOTE: if col is at
-                                                                                 // width-1, does it get null?
-
+                if (row < rowToBeRemoved) {
+                    newPicture.setRGB(col, row, picture.getRGB(col, row));
                 } else {
-
-                    newPicture.setARGB(col, row, picture.getARGB(col, row));
-
+                    newPicture.setRGB(col, row, picture.getRGB(col, row + 1));
                 }
 
             }
@@ -260,6 +250,7 @@ public class SeamCarver {
 
         picture = newPicture;
 
+        double[][] newEnergy = new double[height() - 1][width()];
         for (int col = 0; col < newPicture.width(); col++) {
 
             int rowToBeRemoved = seam[col];
@@ -285,24 +276,18 @@ public class SeamCarver {
     // remove vertical seam from current picture
     public void removeVerticalSeam(int[] seam) { // seam col based
 
-        double[][] newEnergy = new double[height()][width() - 1];
         Picture newPicture = new Picture(width() - 1, height());
 
-        for (int row = 0; row < height(); row++) {
+        for (int row = 0; row < newPicture.height(); row++) {
 
             int colToBeRemoved = seam[row];
 
-            for (int col = 0; col < width(); col++) {
+            for (int col = 0; col < newPicture.width(); col++) {
 
-                if (col >= colToBeRemoved) {
-
-                    newPicture.setARGB(col, row, picture.getARGB(col + 1, row)); // get rgb on right. NOTE: if col is at
-                                                                                 // width-1, does it get null?
-
-                } else {
-
-                    newPicture.setARGB(col, row, picture.getARGB(col, row));
-
+                if (col < colToBeRemoved) {
+                    newPicture.setRGB(col, row, picture.getRGB(col, row));
+                } else if (col > colToBeRemoved) {
+                    newPicture.setRGB(col - 1, row, picture.getRGB(col, row));
                 }
 
             }
@@ -310,6 +295,7 @@ public class SeamCarver {
         }
 
         picture = newPicture;
+        double[][] newEnergy = new double[height()][width() - 1];
 
         for (int row = 0; row < newPicture.height(); row++) {
 
@@ -333,23 +319,9 @@ public class SeamCarver {
 
     }
 
-    private void removeSeam(int[] seam) {
-        if (seam == null) {
-            throw new IllegalArgumentException("Null argument to removeSeam.\n");
-        }
-        if (seam.length != picture.height()) {
-            throw new IllegalArgumentException("seam wrong length.\n");
-        }
-
-        Picture tempPicture = new Picture(picture.width() - 1, picture.height());
-        // seam removal in 2D for loop
-        picture = tempPicture;
-
-    }
-
     // unit testing (optional)
     public static void main(String[] args) {
-
+        // [UncommentedEmptyMethodBody]
     }
 
 }
