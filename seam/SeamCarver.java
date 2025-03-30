@@ -10,8 +10,18 @@ import edu.princeton.cs.algs4.Picture;
  * The hardest part about SeamCarver was conveying the picture into code. The
  * row/col indices to x and y coordinate system is really weird and I've faced
  * many arrayindexoutofbounds errors.
+ * 
  * However after getting advice from my peers, I was able to visualize the
  * different puzzle pieces I needed in this code to finish this piece of puzzle.
+ * 
+ * I think one optimization that can be done with this code is to calculate the
+ * first row or column first to ignore the first and last element before moving
+ * on to the rest of the computation. If it were to be like for example a 100x
+ * by 8y, having this optimization could save 200 checks (maybe in worst case)
+ * because you wont have
+ * to check the path of the first node and the last node because the value is
+ * the same as the 2nd node or the 2nd last node. However, as a lazy programmer
+ * I would like to not do that and I think I am happy with my 100%.
  */
 
 public class SeamCarver {
