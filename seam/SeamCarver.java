@@ -1,5 +1,19 @@
 import edu.princeton.cs.algs4.Picture;
 
+/**
+ * @author Rui Zhao attests that this code is their original work and was
+ *         written in compliance with the class Academic Integrity and
+ *         Collaboration Policy found in the syllabus.
+ */
+
+/*
+ * The hardest part about SeamCarver was conveying the picture into code. The
+ * row/col indices to x and y coordinate system is really weird and I've faced
+ * many arrayindexoutofbounds errors.
+ * However after getting advice from my peers, I was able to visualize the
+ * different puzzle pieces I needed in this code to finish this piece of puzzle.
+ */
+
 public class SeamCarver {
 
     private Picture picture;
@@ -14,8 +28,12 @@ public class SeamCarver {
 
         this.picture = new Picture(picture);
         energyField = new double[height()][width()];
-        // calculate initial energy
 
+        establishEnergyField();
+
+    }
+
+    private void establishEnergyField() {
         for (int row = 0; row < picture.height(); row++) {
 
             for (int col = 0; col < picture.width(); col++) {
@@ -25,10 +43,6 @@ public class SeamCarver {
             }
 
         }
-
-        // energyField = new double[picture.height()][picture.width()];
-        // transposePicture();
-
     }
 
     private double calculateEnergy(int row, int col) {
@@ -91,9 +105,9 @@ public class SeamCarver {
 
         }
 
-        for (int col = 0; col < picture.width() - 1; col++) {
+        for (int col = 0; col < width() - 1; col++) {
 
-            for (int row = 0; row < picture.height(); row++) {
+            for (int row = 0; row < height(); row++) {
 
                 // up
                 if (row != 0 && energy(col + 1, row - 1) + distTo[row][col] < distTo[row - 1][col + 1]) {
@@ -187,9 +201,9 @@ public class SeamCarver {
          * }
          */
 
-        for (int row = 0; row < picture.height() - 1; row++) {
+        for (int row = 0; row < height() - 1; row++) {
 
-            for (int col = 0; col < picture.width(); col++) {
+            for (int col = 0; col < width(); col++) {
 
                 // left
                 if (col != 0 && energy(col - 1, row + 1) + distTo[row][col] < distTo[row + 1][col - 1]) {
@@ -218,7 +232,7 @@ public class SeamCarver {
         int shortestPathColumn = -1;
         for (int i = 0; i < width(); i++) {
             if (distTo[height() - 1][i] < shortestPath) {
-                shortestPath = distTo[picture.height() - 1][i];
+                shortestPath = distTo[height() - 1][i];
                 shortestPathColumn = i;
             }
         }
@@ -236,20 +250,24 @@ public class SeamCarver {
 
     }
 
-    // remove horizontal seam from current picture
-    public void removeHorizontalSeam(int[] seam) {
-
+    private void checkHorizontalErrors(int[] seam) {
         if (seam == null || height() <= 1 || seam.length != width()) {
             throw new IllegalArgumentException();
         }
 
         for (int i = 0; i < seam.length - 1; i++) {
-            if (Math.abs(seam[i] - seam[i + 1]) > 1) {
+            if (Math.abs(seam[i] - seam[i + 1]) > 1) { // if the distance of current seam and next seam is more than 1
                 throw new IllegalArgumentException();
             }
         }
+    }
 
-        Picture newPicture = new Picture(picture.width(), picture.height() - 1);
+    // remove horizontal seam from current picture
+    public void removeHorizontalSeam(int[] seam) {
+
+        checkHorizontalErrors(seam);
+
+        Picture newPicture = new Picture(width(), height() - 1);
 
         for (int col = 0; col < newPicture.width(); col++) {
 
@@ -273,11 +291,11 @@ public class SeamCarver {
         double[][] newEnergy = new double[picture.height() - 1][picture.width()];
         picture = newPicture;
 
-        for (int col = 0; col < newPicture.width(); col++) {
+        for (int col = 0; col < width(); col++) {
 
             int rowToBeRemoved = seam[col];
 
-            for (int row = 0; row < newPicture.height(); row++) {
+            for (int row = 0; row < height(); row++) {
 
                 if (row < rowToBeRemoved - 1) {
                     newEnergy[row][col] = energyField[row][col];
@@ -295,20 +313,24 @@ public class SeamCarver {
 
     }
 
-    // remove vertical seam from current picture
-    public void removeVerticalSeam(int[] seam) { // seam col based
-
+    private void checkVerticalErrors(int[] seam) {
         if (seam == null || width() <= 1 || seam.length != height()) {
             throw new IllegalArgumentException();
         }
 
         for (int i = 0; i < seam.length - 1; i++) {
-            if (Math.abs(seam[i] - seam[i + 1]) > 1) {
+            if (Math.abs(seam[i] - seam[i + 1]) > 1) { // if the distance of current seam and next seam is more than 1
                 throw new IllegalArgumentException();
             }
         }
+    }
 
-        Picture newPicture = new Picture(picture.width() - 1, picture.height());
+    // remove vertical seam from current picture
+    public void removeVerticalSeam(int[] seam) { // seam col based
+
+        checkVerticalErrors(seam);
+
+        Picture newPicture = new Picture(width() - 1, height());
 
         for (int row = 0; row < newPicture.height(); row++) {
 
@@ -332,11 +354,11 @@ public class SeamCarver {
         double[][] newEnergy = new double[picture.height()][picture.width() - 1];
         picture = newPicture;
 
-        for (int row = 0; row < newPicture.height(); row++) {
+        for (int row = 0; row < height(); row++) {
 
             int colToBeRemoved = seam[row];
 
-            for (int col = 0; col < newPicture.width(); col++) {
+            for (int col = 0; col < width(); col++) {
                 if (col < colToBeRemoved - 1) {
                     newEnergy[row][col] = energyField[row][col];
                 } else if (col > colToBeRemoved) {
