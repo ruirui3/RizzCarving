@@ -234,17 +234,103 @@ public class SeamCarver {
     // remove horizontal seam from current picture
     public void removeHorizontalSeam(int[] seam) {
 
+        double[][] newEnergy = new double[height() - 1][width()];
+        Picture newPicture = new Picture(width(), height() - 1);
+
+        for (int col = 0; col < width(); col++) {
+
+            int rowToBeRemoved = seam[col];
+
+            for (int row = 0; col < height(); row++) {
+
+                if (row >= rowToBeRemoved) {
+
+                    newPicture.setARGB(col, row, picture.getARGB(col, row + 1)); // get rgb on right. NOTE: if col is at
+                                                                                 // width-1, does it get null?
+
+                } else {
+
+                    newPicture.setARGB(col, row, picture.getARGB(col, row));
+
+                }
+
+            }
+
+        }
+
+        picture = newPicture;
+
+        for (int col = 0; col < newPicture.width(); col++) {
+
+            int rowToBeRemoved = seam[col];
+
+            for (int row = 0; row < newPicture.height(); row++) {
+
+                if (row < rowToBeRemoved - 1) { // shift due to new pic
+                    newEnergy[row][col] = energyField[row][col];
+                } else if (row > rowToBeRemoved) {
+                    newEnergy[row][col] = energyField[row + 1][col];
+                } else {
+                    newEnergy[row][col] = calculateEnergy(row, col);
+                }
+
+            }
+
+        }
+
+        energyField = newEnergy;
+
     }
 
     // remove vertical seam from current picture
-    public void removeVerticalSeam(int[] seam) {
-        /*
-         * if (vertical) {
-         * transposePicture();
-         * vertical = false;
-         * }
-         * removeSeam(seam);
-         */
+    public void removeVerticalSeam(int[] seam) { // seam col based
+
+        double[][] newEnergy = new double[height()][width() - 1];
+        Picture newPicture = new Picture(width() - 1, height());
+
+        for (int row = 0; row < height(); row++) {
+
+            int colToBeRemoved = seam[row];
+
+            for (int col = 0; col < width(); col++) {
+
+                if (col >= colToBeRemoved) {
+
+                    newPicture.setARGB(col, row, picture.getARGB(col + 1, row)); // get rgb on right. NOTE: if col is at
+                                                                                 // width-1, does it get null?
+
+                } else {
+
+                    newPicture.setARGB(col, row, picture.getARGB(col, row));
+
+                }
+
+            }
+
+        }
+
+        picture = newPicture;
+
+        for (int row = 0; row < newPicture.height(); row++) {
+
+            int colToBeRemoved = seam[row];
+
+            for (int col = 0; col < newPicture.width(); col++) {
+
+                if (col < colToBeRemoved - 1) { // shift due to new pic
+                    newEnergy[row][col] = energyField[row][col];
+                } else if (col > colToBeRemoved) {
+                    newEnergy[row][col] = energyField[row][col + 1];
+                } else {
+                    newEnergy[row][col] = calculateEnergy(row, col);
+                }
+
+            }
+
+        }
+
+        energyField = newEnergy;
+
     }
 
     private void removeSeam(int[] seam) {
