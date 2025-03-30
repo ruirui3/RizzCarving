@@ -230,7 +230,7 @@ public class SeamCarver {
     // remove horizontal seam from current picture
     public void removeHorizontalSeam(int[] seam) {
 
-        Picture newPicture = new Picture(width(), height() - 1);
+        Picture newPicture = new Picture(picture.width(), picture.height() - 1);
 
         for (int col = 0; col < newPicture.width(); col++) {
 
@@ -250,14 +250,14 @@ public class SeamCarver {
 
         picture = newPicture;
 
-        double[][] newEnergy = new double[height() - 1][width()];
+        double[][] newEnergy = new double[picture.height() - 1][picture.width()];
         for (int col = 0; col < newPicture.width(); col++) {
 
             int rowToBeRemoved = seam[col];
 
             for (int row = 0; row < newPicture.height(); row++) {
 
-                if (row < rowToBeRemoved - 1) { // shift due to new pic
+                if (row < rowToBeRemoved - 1) {
                     newEnergy[row][col] = energyField[row][col];
                 } else if (row > rowToBeRemoved) {
                     newEnergy[row][col] = energyField[row + 1][col];
@@ -276,7 +276,7 @@ public class SeamCarver {
     // remove vertical seam from current picture
     public void removeVerticalSeam(int[] seam) { // seam col based
 
-        Picture newPicture = new Picture(width() - 1, height());
+        Picture newPicture = new Picture(picture.width() - 1, picture.height());
 
         for (int row = 0; row < newPicture.height(); row++) {
 
@@ -286,8 +286,8 @@ public class SeamCarver {
 
                 if (col < colToBeRemoved) {
                     newPicture.setRGB(col, row, picture.getRGB(col, row));
-                } else if (col > colToBeRemoved) {
-                    newPicture.setRGB(col - 1, row, picture.getRGB(col, row));
+                } else {
+                    newPicture.setRGB(col, row, picture.getRGB(col + 1, row));
                 }
 
             }
@@ -295,22 +295,20 @@ public class SeamCarver {
         }
 
         picture = newPicture;
-        double[][] newEnergy = new double[height()][width() - 1];
+        double[][] newEnergy = new double[picture.height()][picture.width() - 1];
 
         for (int row = 0; row < newPicture.height(); row++) {
 
             int colToBeRemoved = seam[row];
 
             for (int col = 0; col < newPicture.width(); col++) {
-
-                if (col < colToBeRemoved - 1) { // shift due to new pic
+                if (col < colToBeRemoved) {
                     newEnergy[row][col] = energyField[row][col];
-                } else if (col > colToBeRemoved) {
+                } else if (col < newPicture.width() - 1) { // Avoid out-of-bounds issue
                     newEnergy[row][col] = energyField[row][col + 1];
                 } else {
-                    newEnergy[row][col] = calculateEnergy(row, col);
+                    newEnergy[row][col] = 1000; // Assign boundary energy for the last column
                 }
-
             }
 
         }
@@ -325,3 +323,13 @@ public class SeamCarver {
     }
 
 }
+
+/*
+ * if (col < colToBeRemoved) {
+ * newEnergy[row][col] = energyField[row][col];
+ * } else if (col == newPicture.width() - 1) {
+ * newEnergy[row][col - 1] = 1000;
+ * } else {
+ * newEnergy[row][col] = calculateEnergy(row, col);
+ * }
+ */
